@@ -387,7 +387,7 @@ if not sorter.is_done():
     #Progress bar
     if sorter.current_round-1 < sorter.total_rounds:
         progress = (sorter.current_round + 1) / sorter.total_rounds
-        #st.progress(progress)
+        st.progress(progress)
     elif sorter.current_round >= sorter.total_rounds:
         ""
 
