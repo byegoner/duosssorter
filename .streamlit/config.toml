@@ -344,7 +344,7 @@
 
 [theme]
 #base = "light"
-#primaryColor = "#ffce08"
+primaryColor = "#2676CD"
 font = "monospace"
 #backgroundColor="ffffff"
 #secondaryBackgroundColor="f0f2f6"
@@ -423,7 +423,7 @@ font = "monospace"
 # positive integer.
 # 
 # If this isn't set, the font size will be 16px.
-# baseFontSize =
+baseFontSize = 14
 
 # The root font weight for the app.
 # 
