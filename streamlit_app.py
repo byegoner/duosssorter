@@ -385,11 +385,10 @@ if not sorter.is_done():
     #st.write(sorter.total_rounds) <-- Uncomment to check how adjustments to the ranking system impact round number
 
     #Progress bar
-    if sorter.current_round-1 < sorter.total_rounds:
+    progress = (sorter.current_round + 1) / sorter.total_rounds
+    if sorter.current_round < sorter.total_rounds:
         st.progress(progress)
-        progress = (sorter.current_round + 1) / sorter.total_rounds
-        st.progress(progress)
-    elif sorter.current_round >= sorter.total_rounds:
+    elif sorter.current_round-1 >= sorter.total_rounds:
         ""
 
     #Grabbing three pairings and populating image/button options into 3 containers
