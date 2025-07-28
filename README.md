@@ -7,4 +7,4 @@ Runs on Python with streamlit web-based UI.
 
 ## Credits
 
-Song ranking and sorter functions adapted from <mark>@celdaris</mark> via https://github.com/pradigunara/sssorter song sorter.
+Ranking and sorter functions adapted from <mark>@celdaris</mark> via https://github.com/pradigunara/sssorter song sorter.
