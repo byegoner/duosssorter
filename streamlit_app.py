@@ -235,39 +235,28 @@ class shipsorter:
             self.phase3_sorted = self.rank_from_pairwise(self.phase3_pool, self.phase3_results)
             self.phase3_in_progress = False
 
-    # Pairwise sorting function for phase 3
+    # Pairwise sorting function
     def rank_from_pairwise(self, items, results):
-        from collections import defaultdict, deque
+        from collections import defaultdict
 
-        graph = defaultdict(list)
-        indegree = defaultdict(int)
+        win_count = defaultdict(int)
+        match_count = defaultdict(int)
 
         for (a, b), winner in results.items():
-            loser = b if winner == a else a
-            graph[winner].append(loser)
-            indegree[loser] += 1
-            if winner not in indegree:
-                indegree[winner] = 0
+            match_count[a] += 1
+            match_count[b] += 1
+            win_count[winner] += 1
 
-        q = deque([node for node in items if indegree[node] == 0])
-        ranked = []
+        def ranking_score(ship):
+            return win_count[ship]
 
-        while q:
-            node = q.popleft()
-            ranked.append(node)
-            for neighbor in graph[node]:
-                indegree[neighbor] -= 1
-                if indegree[neighbor] == 0:
-                    q.append(neighbor)
-
-        return ranked
+        return sorted(items, key=lambda x: (-ranking_score(x), x))
 
     # Returns rankings
     def get_rankings(self):
         phase = self.get_current_phase_info()["phase"]
         if phase == 3 and not self.phase3_in_progress:
             return [{"name": name} for name in self.phase3_sorted]
-
 
         active_ships = [s for s in self.ships if not s["eliminated"]]
         return sorted(active_ships, key=lambda s: -s["score"])
@@ -513,7 +502,6 @@ if not sorter.is_done():
 elif sorter.get_current_phase_info()["phase"] == 3 and not sorter.phase3_in_progress:
     st.subheader("top 10", divider="blue")
     rankings = sorter.get_rankings()
-    st.write(rankings)
     col1, col2, col3 = st.columns([1, 1, .9])
     with col2:
         st.image(ships_data[rankings[0]['name']], width=200, caption=add_cap(rankings[0]['name']))
