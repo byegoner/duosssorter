@@ -495,7 +495,7 @@ if not sorter.is_done():
                           kwargs={"ship_name": ship["name"]})
 
     if phase_info["phase"] < 3:
-        st.caption(f"round {sorter.current_round + 1} of 115 in phase one")
+        st.caption(f"round {sorter.current_round + 1} of phase 1")
         my_grid = grid(1, [.2, .9, .065], 1, vertical_align="bottom")
         my_grid.button("none", key="none", on_click=eliminate_current_ships)
 
