@@ -167,9 +167,10 @@ class shipsorter:
         self.current_round += 1
         self.check_elimination()
 
-    def hard_elim(self):
+    def eliminate_ships(self, names_to_elim):
         for s in self.ships:
-            s["eliminated"] = True
+            if s["name"] in names_to_elim:
+                s["eliminated"] = True
 
     def check_elimination(self):
         phase_info = self.get_current_phase_info()
@@ -368,7 +369,7 @@ if "eliminated" not in st.session_state:
 if "selected" not in st.session_state:
     st.session_state.selected = False
 
-def hard_elim(eliminated_ships):
+def eliminate_selected_ships(eliminated_ships):
     st.session_state.eliminated = eliminated_ships
 
 def selected_click(ship_name):
@@ -387,9 +388,7 @@ on = st.checkbox("images on/off (mobile)", value=True)
 #Actual app/executions of functions
 if not sorter.is_done():
     if st.session_state.eliminated:
-        eliminated_ships = st.session_state.eliminated
-        for i in range(len(eliminated_ships)):
-            sorter.hard_elim([eliminated_ships][i])
+        sorter.eliminate_ships([ship["name"] for ship in st.session_state.eliminated])
         st.session_state.eliminated = False
     
     if st.session_state.selected:
@@ -426,7 +425,7 @@ if not sorter.is_done():
 
     st.caption("for best results shuffle for neither/none")
 
-    st.button("none", on_click=hard_elim, kwargs={"eliminated_ships": [current_ships]})
+    st.button("none", on_click=eliminate_selected_ships, kwargs={"eliminated_ships": [current_ships]})
 
     #Shuffle button
     #col1, col2, col3 = st.columns([1, 1, 2.32])
