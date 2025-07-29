@@ -63,19 +63,16 @@ def calculate_rounds_hybrid(total_ships):
     return {
         "phase1": {
             "rounds": phase_1_rounds_rounded,
-            "description": "phase 1",
             "survivors": phase_1_survivors,
             "min_appearances": min_appearances_ship
         },
         "phase2": {
             "rounds": phase_2_rounds_rounded,
-            "description": "phase 2",
             "survivors": final_ships,
             "elimination_threshold": math.ceil(phase_2_rounds_rounded * 0.3)
         },
         "phase3": {
             "rounds": phase_3_rounds,
-            "description": "phase 3",
             "survivors": "top rankings"
         },
         "totalRounds": phase_1_rounds_rounded + phase_2_rounds_rounded + phase_3_rounds,
@@ -93,7 +90,6 @@ def get_current_phase(current_round, config):
             "phase": 1,
             "phaseRound": current_round,
             "maxPhaseRounds": p1,
-            "description": config["phase1"]["description"],
             "type": "discovery"
         }
     elif current_round <= p1 + p2:
@@ -101,7 +97,6 @@ def get_current_phase(current_round, config):
             "phase": 2,
             "phaseRound": current_round - p1,
             "maxPhaseRounds": p2,
-            "description": config["phase2"]["description"],
             "type": "elimination"
         }
     else:
@@ -109,7 +104,6 @@ def get_current_phase(current_round, config):
             "phase": 3,
             "phaseRound": current_round - p1 - p2,
             "maxPhaseRounds": p3,
-            "description": config["phase3"]["description"],
             "type": "head-to-head"
         }
 
@@ -136,15 +130,32 @@ class shipsorter:
         self.total_rounds = self.system_config["totalRounds"]
         self.current_options = []
 
+        self.phase3_pool = []
+        self.phase3_pairs = []
+        self.phase3_results = {}
+        self.phase3_sorted = []
+        self.phase3_in_progress = False
+        self.phase3_index = 0
+
     def get_current_phase_info(self):
         return get_current_phase(self.current_round + 1, self.system_config)
 
     def select_three_ships(self):
         available = [s for s in self.ships if not s["eliminated"]]
-        if len(available) < 3:
-            self.current_options = available
+        phase = self.get_current_phase_info()["phase"]
+
+        if phase == 3:
+            if self.phase3_in_progress:
+                pair = self.phase3_pairs[self.phase3_index]
+                self.current_options = [
+                    next(s for s in self.ships if s["name"] == pair[0]),
+                    next(s for s in self.ships if s["name"] == pair[1])
+                ]
         else:
-            self.current_options = random.sample(available, 3)
+            if len(available) < 3:
+                self.current_options = available
+            else:
+                self.current_options = random.sample(available, 3)
 
         for ship in self.current_options:
             ship["appearances"] += 1
@@ -159,24 +170,17 @@ class shipsorter:
         phase_info = self.get_current_phase_info()
 
         if phase_info["phase"] == 3:
-            for ship in self.current_options:
-                ship["h2hMatches"] += 1
-                if ship["name"] == winner_name:
-                    ship["h2hWins"] += 2
-                    ship["h2hScore"] += 1
-                else:
-                    ship["h2hLosses"] += 1
+            self.record_phase3_result(winner_name)
         else:
             winner["score"] += 1
 
-        self.history.append({
-            "round": self.current_round + 1,
-            "options": [s["name"] for s in self.current_options],
-            "winner": winner_name
-        })
-
-        self.current_round += 1
-        self.check_elimination()
+            self.history.append({
+                "round": self.current_round + 1,
+                "options": [s["name"] for s in self.current_options],
+                "winner": winner_name
+            })
+            self.current_round += 1
+            self.check_elimination()
 
     def eliminate_ships(self, names_to_elim):
         for s in self.ships:
@@ -205,22 +209,72 @@ class shipsorter:
                 for s in self.ships:
                     s["h2hScore"] = s["h2hWins"] = s["h2hLosses"] = s["h2hMatches"] = 0
 
+                self.phase3_pool = [s["name"] for s in survivors[:keep_count]]
+                self.phase3_pairs = self.generate_all_pairs(self.phase3_pool)
+                self.phase3_results = {}
+                self.phase3_sorted = []
+                self.phase3_index = 0
+                self.phase3_in_progress = True
+    
+    # Generating finalists for phase 3
+    def generate_all_pairs(self, items):
+        pairs = []
+        for i in range(len(items)):
+            for j in range(i + 1, len(items)):
+                pairs.append((items[i], items[j]))
+        random.shuffle(pairs)
+        return pairs
+
+    def record_phase3_result(self, winner):
+        pair = self.phase3_pairs[self.phase3_index]
+        loser = pair[1] if winner == pair[0] else pair[0]
+        self.phase3_results[(pair[0], pair[1])] = winner
+        self.phase3_index += 1
+
+        if self.phase3_index >= len(self.phase3_pairs):
+            self.phase3_sorted = self.rank_from_pairwise(self.phase3_pool, self.phase3_results)
+            self.phase3_in_progress = False
+
+    # Pairwise sorting function for phase 3
+    def rank_from_pairwise(self, items, results):
+        from collections import defaultdict, deque
+
+        graph = defaultdict(list)
+        indegree = defaultdict(int)
+
+        for (a, b), winner in results.items():
+            loser = b if winner == a else a
+            graph[winner].append(loser)
+            indegree[loser] += 1
+            if winner not in indegree:
+                indegree[winner] = 0
+
+        q = deque([node for node in items if indegree[node] == 0])
+        ranked = []
+
+        while q:
+            node = q.popleft()
+            ranked.append(node)
+            for neighbor in graph[node]:
+                indegree[neighbor] -= 1
+                if indegree[neighbor] == 0:
+                    q.append(neighbor)
+
+        return ranked
+
+    # Returns rankings
     def get_rankings(self):
         phase = self.get_current_phase_info()["phase"]
+        if phase == 3 and not self.phase3_in_progress:
+            return [{"name": name} for name in self.phase3_sorted]
+
+
         active_ships = [s for s in self.ships if not s["eliminated"]]
-
-        if phase == 3:
-            def sort_key(s):
-                win_pct = s["h2hWins"] / s["h2hMatches"] if s["h2hMatches"] > 0 else 0
-                return -win_pct, -s["h2hMatches"], -s["score"]
-        else:
-            def sort_key(s):
-                return -s["score"]
-
-        return sorted(active_ships, key=sort_key)
+        return sorted(active_ships, key=lambda s: -s["score"])
 
     def is_done(self):
-        return self.current_round >= self.total_rounds
+        return self.get_current_phase_info()["phase"] == 3 and not self.phase3_in_progress
+
 
 
 # Image paths
@@ -377,17 +431,14 @@ def add_cap(x):
 if "sorter" not in st.session_state:
     st.session_state.sorter = shipsorter(ships)
 
-if "eliminated" not in st.session_state:
-    st.session_state.eliminated = False
-
 if "selected" not in st.session_state:
     st.session_state.selected = False
 
-
+# Elimination function for none button
 def eliminate_current_ships():
     sorter.eliminate_ships([ship["name"] for ship in sorter.current_options])
 
-
+# Function that keeps selected ships across rounds
 def selected_click(ship_name):
     st.session_state.selected = ship_name
 
@@ -413,16 +464,19 @@ if not sorter.is_done():
     # st.write(sorter.total_rounds) <-- Uncomment to check how adjustments to the ranking system impact round number
 
     # Progress bar
-    progress = (sorter.current_round + 1) / sorter.total_rounds
-    # st.caption(f"round {sorter.current_round}")
-    if sorter.current_round < sorter.total_rounds:
+    if phase_info["phase"] < 3:
+        progress = (sorter.current_round + 1) / sorter.total_rounds
         st.progress(progress)
-    elif sorter.current_round >= sorter.total_rounds:
-        ""
-
+    elif phase_info["phase"] == 3:
+        total_p3_pairs = len(sorter.phase3_pairs)
+        current_p3_round = sorter.phase3_index
+        progress = (current_p3_round) / total_p3_pairs if total_p3_pairs > 0 else 1
+        st.progress(progress)
+    
     # Grabbing three pairings and populating image/button options into 3 containers
     current_ships = sorter.select_three_ships()
-    cols = st.columns(3)
+    num_ships = len(current_ships)
+    cols = st.columns(num_ships)
 
     for i, col in enumerate(cols):
         ship = current_ships[i]
@@ -436,20 +490,22 @@ if not sorter.is_done():
                           on_click=selected_click,
                           kwargs={"ship_name": ship["name"]})
 
-    st.caption("none will eliminate ALL three ships, use sparingly!!")
-    my_grid = grid([.8, .1], 1, .25, vertical_align="bottom")
-    options = ["↺"]
-    my_grid.pills("", options)
+    if phase_info["phase"] < 3:
+        st.caption("none will eliminate ALL three ships, use sparingly!!")
+        my_grid = grid([.8, .1], 1, .25, vertical_align="bottom")
+        options = ["↺"]
+        my_grid.pills("", options)
 
-    my_grid.button("none", key="none", on_click=eliminate_current_ships)
+        my_grid.button("none", key="none", on_click=eliminate_current_ships)
+    else:
+        st.caption("final showdown")
 
 # Showing top 10 rankings with image attachment for number one
-else:
+elif sorter.get_current_phase_info()["phase"] == 3 and not sorter.phase3_in_progress:
     st.subheader("top 10", divider="blue")
     rankings = sorter.get_rankings()
-    for idx, ship in enumerate(rankings[:10], 1):
-        if idx < 2:
-            col1, col2, col3 = st.columns([1, 1, 1])
-            with col2:
-                st.image(ships_data[ship['name']], width=200, caption=add_cap(ship["name"]))
-        st.write(f"{idx}. {ship['name'].replace(',', ' ♡ ')}")
+    col1, col2, col3 = st.columns([1, 1, 1])
+    with col2:
+        st.image(ships_data[rankings[0]["name"]], width=200, caption=add_cap(rankings[0]["name"]))
+    for i in range(10):
+        st.write(f"{i+1}. {(rankings[i]['name']).replace(',', ' ♡ ')}")
