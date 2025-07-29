@@ -437,7 +437,7 @@ if not sorter.is_done():
                           kwargs={"ship_name": ship["name"]})
 
     st.caption("none will eliminate ALL three ships, use sparingly!!")
-    my_grid = grid([.8, .1], 1, 1, vertical_align="bottom")
+    my_grid = grid([.8, .1], 1, 1, vertical_align="center")
     options = ["↺"]
     my_grid.pills("", options)
 
