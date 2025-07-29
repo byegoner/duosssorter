@@ -496,13 +496,16 @@ if not sorter.is_done():
 
     if phase_info["phase"] < 3:
         st.caption(f"round {sorter.current_round + 1} of 115 in phase one")
-        my_grid = grid([.1, .8, .1], 1, .26, vertical_align="bottom")
-        options = ["↺"]
-        my_grid.pills("", options)
+        my_grid = grid(1, [.2, .9, .065], 1, vertical_align="bottom")
+        my_grid.button("none", key="none", on_click=eliminate_current_ships)
+
 
         my_grid.write("")
 
-        my_grid.button("none", key="none", on_click=eliminate_current_ships)
+        my_grid.write("")
+
+        options = ["↺"]
+        my_grid.pills("", options)
     else:
         ""
 
