@@ -1,6 +1,7 @@
 import pandas as pd
 import random
 import streamlit as st
+import streamlit-extras.grid import grid
 import math
 
 members_1 = pd.Series(
@@ -435,7 +436,12 @@ if not sorter.is_done():
                           on_click=selected_click,
                           kwargs={"ship_name": ship["name"]})
 
-    st.caption("for best results shuffle for neither/none")
+    st.caption("none will eliminate ALL three ships, use sparingly!!")
+    my_grid = grid([.8, .1], 2, vertical_align="bottom")
+    options = ["↺"]
+    my_grid.pills("", options)
+    my_grid.button("none")
+    #st.caption("for best results shuffle for neither/none")
 
     st.button("none", on_click=eliminate_current_ships)
 
