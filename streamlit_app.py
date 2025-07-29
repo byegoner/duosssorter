@@ -43,7 +43,7 @@ ships = get_ship_data()
 def calculate_rounds_1(ships_count):
     total_rounds = (ships_count * (ships_count - 1)) / 2
     rounds_full_coverage = math.ceil(total_rounds / 3)
-    min_appearances_ship = 4  # Makes sure that each option appears at least 4 times
+    min_appearances_ship = 3  # Makes sure that each option appears at least 4 times
     total_appearances = ships_count * min_appearances_ship
     rounds_appearances = math.ceil(total_appearances / 3)
     base_rounds = max(rounds_full_coverage, rounds_appearances)
