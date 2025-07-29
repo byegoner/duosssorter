@@ -437,18 +437,10 @@ if not sorter.is_done():
                           kwargs={"ship_name": ship["name"]})
 
     st.caption("none will eliminate ALL three ships, use sparingly!!")
-    my_grid = grid([.8, .1], 2, vertical_align="bottom")
+    my_grid = grid([.8, .1], 2, vertical_align="center")
     options = ["↺"]
     my_grid.pills("", options)
     my_grid.button("none", key="none", on_click=eliminate_current_ships)
-    #st.caption("for best results shuffle for neither/none")
-
-    # Shuffle button
-    # col1, col2, col3 = st.columns([1, 1, 2.32])
-    # with col3:
-    # options = ["↺"]
-    # if st.pills("", options):
-    # current_ships = sorter.select_three_ships()
 
 # Showing top 10 rankings with image attachment for number one
 else:
