@@ -446,9 +446,9 @@ def selected_click(ship_name):
 sorter = st.session_state.sorter
 
 st.header("duosssorter")
-with st.expander("info"):
-    st.markdown(
-    ":blue-badge[05z+ only] :blue-badge[better on desktop] :blue-badge[adapted from [@celdaris](https://x.com/celdaris)]"
+#with st.expander("duosssorter"):
+st.markdown(
+    ":gray-badge[05z and above] :gray-badge[better on desktop] :gray-badge[adapted from [@celdaris](https://x.com/celdaris)] :blue-badge[none will eliminate ALL three ships]"""
 )
 
 # Mobile-friendly checkbox
@@ -466,8 +466,8 @@ if not sorter.is_done():
 
     # Progress bar
     if phase_info["phase"] < 3:
+        pass
         #progress = ((sorter.current_round + 1) / sorter.total_rounds)*.75 <-- Phased out progress bar
-        st.caption(f"round {sorter.current_round + 1} of 115 in phase one")
     elif phase_info["phase"] == 3:
         total_p3_pairs = len(sorter.phase3_pairs)
         current_p3_round = sorter.phase3_index
@@ -495,14 +495,14 @@ if not sorter.is_done():
                           kwargs={"ship_name": ship["name"]})
 
     if phase_info["phase"] < 3:
-        st.badge("none will eliminate ALL three ships", color = "orange")
+        st.caption(f"round {sorter.current_round + 1} of 115 in phase one")
         my_grid = grid([.8, .1], 1, .27, vertical_align="bottom")
         options = ["↺"]
         my_grid.pills("", options)
 
         my_grid.button("none", key="none", on_click=eliminate_current_ships)
     else:
-        st.caption("final showdown")
+        ""
 
 # Showing top 10 rankings with image attachment for number one
 elif sorter.get_current_phase_info()["phase"] == 3 and not sorter.phase3_in_progress:
