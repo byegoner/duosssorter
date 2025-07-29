@@ -368,8 +368,8 @@ if "eliminated" not in st.session_state:
 if "selected" not in st.session_state:
     st.session_state.selected = False
 
-def hard_elim(ship_name):
-    st.session_state.eliminated = current_ships
+def hard_elim(eliminated_ships):
+    st.session_state.eliminated = eliminated_ships
 
 def selected_click(ship_name):
     st.session_state.selected = ship_name
@@ -426,7 +426,7 @@ if not sorter.is_done():
 
     st.caption("for best results shuffle for neither/none")
 
-    st.button("none", on_click=hard_elim, kwargs={[current_ships]})
+    st.button("none", on_click=hard_elim, kwargs={"eliminated_ships": [current_ships]})
 
     #Shuffle button
     #col1, col2, col3 = st.columns([1, 1, 2.32])
