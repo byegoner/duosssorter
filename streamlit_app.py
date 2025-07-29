@@ -417,7 +417,7 @@ if not sorter.is_done():
     # st.caption(f"round {sorter.current_round}")
     if sorter.current_round < sorter.total_rounds:
         st.progress(progress)
-    elif sorter.current_round - 1 >= sorter.total_rounds:
+    elif sorter.current_round >= sorter.total_rounds:
         ""
 
     # Grabbing three pairings and populating image/button options into 3 containers
