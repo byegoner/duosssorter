@@ -465,8 +465,8 @@ if not sorter.is_done():
 
     # Progress bar
     if phase_info["phase"] < 3:
-        progress = (sorter.current_round + 1) / sorter.total_rounds
-        st.progress(progress)
+        #progress = ((sorter.current_round + 1) / sorter.total_rounds)*.75 <-- Phased out progress bar
+        st.caption(f"round {sorter.current_round + 1}")
     elif phase_info["phase"] == 3:
         total_p3_pairs = len(sorter.phase3_pairs)
         current_p3_round = sorter.phase3_index
@@ -484,7 +484,10 @@ if not sorter.is_done():
             with st.container(border=True):
                 ship_display = ship["name"].replace(",", " ♡ ")
                 if on:
-                    st.image(ships_data[ship["name"]])
+                    if sorter.get_current_phase_info()["phase"] < 3:
+                        st.image(ships_data[ship["name"]])
+                    else:
+                        st.image(ships_data[ship["name"]], width = 400)
                 st.button(f"{ship_display}", key=f"btn_{i}", use_container_width=True,
                           help=add_cap(ship["name"]),
                           on_click=selected_click,
@@ -504,7 +507,7 @@ if not sorter.is_done():
 elif sorter.get_current_phase_info()["phase"] == 3 and not sorter.phase3_in_progress:
     st.subheader("top 10", divider="blue")
     rankings = sorter.get_rankings()
-    col1, col2, col3 = st.columns([1, 1, 1])
+    col1, col2, col3 = st.columns([1, 1, .9])
     with col2:
         st.image(ships_data[rankings[0]["name"]], width=200, caption=add_cap(rankings[0]["name"]))
     for i in range(10):
