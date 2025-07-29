@@ -167,6 +167,10 @@ class shipsorter:
         self.current_round += 1
         self.check_elimination()
 
+    def hard_elim(self):
+        for s in self.ships:
+            s["eliminated"] = True
+
     def check_elimination(self):
         phase_info = self.get_current_phase_info()
 
@@ -358,8 +362,14 @@ def add_cap(x):
 if "sorter" not in st.session_state:
     st.session_state.sorter = shipsorter(ships)
 
+if "eliminated" not in st.session_state:
+    st.session_state.eliminated = False
+
 if "selected" not in st.session_state:
     st.session_state.selected = False
+
+def hard_elim(ship_name):
+    st.session_state.eliminated = current_ships
 
 def selected_click(ship_name):
     st.session_state.selected = ship_name
@@ -376,6 +386,12 @@ on = st.checkbox("images on/off (mobile)", value=True)
 
 #Actual app/executions of functions
 if not sorter.is_done():
+    if st.session_state.eliminated:
+        eliminated_ships = st.session_state.eliminated
+        for i in range(eliminated_ships):
+            sorter.hard_elim(eliminated_ships[i])
+        st.session_state.eliminated = False
+    
     if st.session_state.selected:
         selected_ship = st.session_state.selected
         sorter.record_winner(selected_ship)
@@ -410,12 +426,14 @@ if not sorter.is_done():
 
     st.caption("for best results shuffle for neither/none")
 
+    st.button("none", on_click=hard_elim, kwargs={[current_ships]})
+
     #Shuffle button
-    col1, col2, col3 = st.columns([1, 1, 2.32])
-    with col3:
-        options = ["↺"]
-        if st.pills("", options):
-            current_ships = sorter.select_three_ships()
+    #col1, col2, col3 = st.columns([1, 1, 2.32])
+    #with col3:
+        #options = ["↺"]
+        #if st.pills("", options):
+            #current_ships = sorter.select_three_ships()
 
 #Showing top 10 rankings with image attachment for number one
 else:
