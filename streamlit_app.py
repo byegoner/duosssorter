@@ -388,7 +388,7 @@ on = st.checkbox("images on/off (mobile)", value=True)
 if not sorter.is_done():
     if st.session_state.eliminated:
         eliminated_ships = st.session_state.eliminated
-        for i in range(eliminated_ships):
+        for i in range(len(eliminated_ships)):
             sorter.hard_elim(eliminated_ships[i])
         st.session_state.eliminated = False
     
