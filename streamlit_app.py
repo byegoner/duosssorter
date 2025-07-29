@@ -389,7 +389,7 @@ if not sorter.is_done():
     if st.session_state.eliminated:
         eliminated_ships = st.session_state.eliminated
         for i in range(len(eliminated_ships)):
-            sorter.hard_elim(eliminated_ships[i])
+            sorter.hard_elim([eliminated_ships][i])
         st.session_state.eliminated = False
     
     if st.session_state.selected:
