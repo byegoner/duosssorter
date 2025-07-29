@@ -1,6 +1,7 @@
 import pandas as pd
 import random
 import streamlit as st
+from streamlit_extras.grid import grid
 import math
 
 members_1 = pd.Series(['Seoyeon', 'Jiwoo', 'Chaeyeon', 'Yooyeon', 'Nakyoung', 'Yubin', 'Kaede', 'Dahyun', 'Kotone', 'Nien', 'Sohyun', 'Xinyu', 'Mayu', 'Jiyeon'], index=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13])
@@ -417,15 +418,11 @@ if not sorter.is_done():
                           on_click=selected_click,
                           kwargs={"ship_name": ship["name"]})
 
-    st.button("none", on_click=eliminate_current_ships)
-    st.caption("this will eliminate ALL three ships, use sparingly!!")
-
-    #Shuffle button
-    col1, col2, col3 = st.columns([1, 1, 2.32])
-    with col3:
-        options = ["↺"]
-        if st.pills("", options):
-            current_ships = sorter.select_three_ships()
+    st.caption("none will eliminate ALL three ships, use sparingly!!")
+    my_grid = grid([.8, .1], 2, vertical_align="bottom")
+    options = ["↺"]
+    my_grid.pills("", options)
+    my_grid.button("none")
 
 #Showing top 10 rankings with image attachment for number one
 else:
