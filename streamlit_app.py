@@ -1,6 +1,7 @@
 import pandas as pd
 import random
 import streamlit as st
+import streamlit_extras
 from streamlit_extras.grid import grid
 import math
 
