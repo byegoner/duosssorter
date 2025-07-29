@@ -417,9 +417,8 @@ if not sorter.is_done():
                           on_click=selected_click,
                           kwargs={"ship_name": ship["name"]})
 
-    st.caption("none will eliminate ALL three ships, use sparingly!!")
-
     st.button("none", on_click=eliminate_current_ships)
+    st.caption("this will eliminate ALL three ships, use sparingly!!")
 
     #Shuffle button
     col1, col2, col3 = st.columns([1, 1, 2.32])
