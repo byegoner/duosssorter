@@ -3,7 +3,7 @@
 155 (variable) rounds of 3 sets of 91 duos to return a top 10 ranking list of all tS duo pairings (05z and above).
 
 ## Technologies
-Runs on Python with streamlit web-based UI.
+Runs on Python with Streamlit web-based UI.
 
 ## Credits
 
