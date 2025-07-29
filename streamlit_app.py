@@ -473,7 +473,7 @@ if not sorter.is_done():
         progress = (current_p3_round) / total_p3_pairs if total_p3_pairs > 0 else 1
         st.progress(progress)
     
-    # Grabbing three pairings and populating image/button options into 3 containers
+    # Grabbing pairings and populating image/button options into containers
     current_ships = sorter.select_three_ships()
     num_ships = len(current_ships)
     cols = st.columns(num_ships)
