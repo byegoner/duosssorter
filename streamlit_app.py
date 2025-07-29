@@ -440,10 +440,8 @@ if not sorter.is_done():
     my_grid = grid([.8, .1], 2, vertical_align="bottom")
     options = ["↺"]
     my_grid.pills("", options)
-    my_grid.button("none", key="none")
+    my_grid.button("none", key="none", on_click=eliminate_current_ships)
     #st.caption("for best results shuffle for neither/none")
-
-    st.button("none", on_click=eliminate_current_ships)
 
     # Shuffle button
     # col1, col2, col3 = st.columns([1, 1, 2.32])
