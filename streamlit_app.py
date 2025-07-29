@@ -516,5 +516,5 @@ elif sorter.get_current_phase_info()["phase"] == 3 and not sorter.phase3_in_prog
     col1, col2, col3 = st.columns([1, 1, .9])
     with col2:
         st.image(ships_data[rankings[0]['name']], width=200, caption=add_cap(rankings[0]['name']))
-    for i in range(10):
+    for i in range(0,10):
         st.write(f"{i+1}. {(rankings[i]['name']).replace(',', ' ♡ ')}")
