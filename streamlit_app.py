@@ -448,7 +448,7 @@ sorter = st.session_state.sorter
 st.header("duosssorter")
 #with st.expander("duosssorter"):
 st.markdown(
-    ":gray-badge[05z and above] :gray-badge[better on desktop] :gray-badge[adapted from [@celdaris](https://x.com/celdaris)] :blue-badge[none will eliminate ALL three pairs]"""
+    ":gray-badge[05z and above] :gray-badge[better on desktop] :gray-badge[adapted from [@celdaris](https://x.com/celdaris)] :blue-badge[none will eliminate all three pairs]"""
 )
 
 # Mobile-friendly checkbox
