@@ -492,7 +492,7 @@ if not sorter.is_done():
 
     if phase_info["phase"] < 3:
         st.caption("none will eliminate ALL three ships, use sparingly!!")
-        my_grid = grid([.8, .1], 1, .23, vertical_align="bottom")
+        my_grid = grid([.8, .1], 1, .27, vertical_align="bottom")
         options = ["↺"]
         my_grid.pills("", options)
 
