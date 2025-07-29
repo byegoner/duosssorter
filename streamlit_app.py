@@ -437,9 +437,10 @@ if not sorter.is_done():
                           kwargs={"ship_name": ship["name"]})
 
     st.caption("none will eliminate ALL three ships, use sparingly!!")
-    my_grid = grid([.8, .1], 2, vertical_align="center")
+    my_grid = grid([.8, .1], 1, 2, vertical_align="bottom")
     options = ["↺"]
     my_grid.pills("", options)
+
     my_grid.button("none", key="none", on_click=eliminate_current_ships)
 
 # Showing top 10 rankings with image attachment for number one
