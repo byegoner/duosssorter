@@ -1,7 +1,7 @@
 import pandas as pd
 import random
 import streamlit as st
-import streamlit-extras.grid import grid
+from streamlit_extras.grid import grid
 import math
 
 members_1 = pd.Series(
